@@ -160,27 +160,30 @@ export default function App() {
           item.id === newItem.id ? { ...item, status: GenerationStatus.SUCCESS, videoUrl } : item
         ));
       } else {
-        // LOCAL PC HOST LOGIC
+        // LOCAL PC HOST LOGIC (FastAPI Compatible)
         setItems(prev => prev.map(item => 
           item.id === newItem.id ? { ...item, status: GenerationStatus.POLLING } : item
         ));
 
+        const formData = new FormData();
+        formData.append('prompt', prompt);
+        
+        if (selectedImage) {
+          // Convert DataURL to Blob for the FastAPI File upload
+          const res = await fetch(selectedImage);
+          const blob = await res.blob();
+          formData.append('image', blob, 'source_image.png');
+        }
+
         const response = await fetch(localEndpoint, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            prompt,
-            image: selectedImage,
-            aspectRatio,
-            resolution
-          })
+          body: formData,
         });
 
         if (!response.ok) {
-          throw new Error(`Local host error: ${response.statusText}. Ensure your PC server is running and CORS is enabled.`);
+          throw new Error(`Local host error: ${response.status}. Ensure your PC server is running and CORS is enabled.`);
         }
 
-        // Local server should return a direct video file or a public URL
         const blob = await response.blob();
         const videoUrl = URL.createObjectURL(blob);
 
