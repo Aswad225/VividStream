@@ -1,0 +1,6 @@
+{
+  "name": "VividStream AI",
+  "description": "A professional AI Video generation studio for prompt-to-video, text-to-video, and image-to-video workflows.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["AI Video Generation", "Prompt Engineering", "Multimodal Studio"]
+}
